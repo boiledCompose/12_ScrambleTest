@@ -59,3 +59,80 @@ fun gameViewModel_CorrectWordGuessed_ScoreUpdatedAndErrorFlagUnset() {
 5. 사용자 추측와 정답을 비교하는 함수를 호출한다.
 6. 상태 변수에 지금까지 수정된 객체의 상태를 재할당한다.
 7. `Assert`를 통해 확인하고자 하는 두 변수를 확인한다.
+
+### 2. 오류 경로
+> Unscramble 앱에서 오류 경로의 예는 사용자가 잘못된 단어를 입력하고 Submit 버튼을 클릭하면 
+> 오류 메시지가 표시되고 점수와 단어 개수가 업데이트되지 않는 것입니다.
+
+```
+@Test
+fun gameViewModel_IncorrectGuess_ErrorFlagSet() {
+    // Given an incorrect word as input
+    val incorrectPlayerWord = "and"
+
+    viewModel.updateUserGuess(incorrectPlayerWord)
+    viewModel.checkUserGuess()
+
+    val currentGameUiState = viewModel.uiState.value
+    // Assert that score is unchanged
+    assertEquals(0, currentGameUiState.score)
+    // Assert that checkUserGuess() method updates isGuessedWordWrong correctly
+    assertTrue(currentGameUiState.isGuessedWordWrong)
+}
+```
+
+위 코드가 하는 일은 다음과 같다:
+1. 임의의 단어 하나를 뷰모델 객체의 사용자-추측 변수에 넣는다.
+2. 사용자 추측과 정답을 비교하는 함수를 호출한다.
+3. 상태 변수에 지금까지 수정된 객체의 상태를 재할당한다.
+4. `Assert`를 통해 변수 값들이 올바른지 확인한다.
+
+### 3. 경계 사례
+> Unscramble 앱에서 경계는 앱이 로드될 때의 UI 상태와 사용자가 최대 단어 수를 
+> 재생한 후의 UI 상태를 확인하는 것이다.
+
+- 다음 코드는 초기화가 잘 작동하는지 확인하는 테스트이다.
+    
+  ```
+    @Test
+    fun gameViewModel_Initialization_FirstWordLoaded() {
+        val gameUiState = viewModel.uiState.value
+        val unScrambledWord = getUnscrambledWord(gameUiState.currentScrambledWord)
+
+        // Assert that current word is scrambled.
+        assertNotEquals(unScrambledWord, gameUiState.currentScrambledWord)
+        // Assert that current word count is set to 1.
+        assertTrue(gameUiState.currentWordCount == 1)
+        // Assert that initially the score is 0.
+        assertTrue(gameUiState.score == 0)
+        // Assert that the wrong word guessed is false.
+        assertFalse(gameUiState.isGuessedWordWrong)
+        // Assert that game is not over.
+        assertFalse(gameUiState.isGameOver)
+    }
+    ```
+
+
+- 다음 코드는 모든 라운드가 끝났을 때 변수 값이 제대로 설정되는지 확인하는 테스트이다.
+        
+    ```
+      @Test
+      fun gameViewModel_AllWordsGuessed_UiStateUpdatedCorrectly() {
+        var expectedScore = 0
+        var currentGameUiState = viewModel.uiState.value
+        var correctPlayerWord = getUnscrambledWord(currentGameUiState.currentScrambledWord)
+        repeat(MAX_NO_OF_WORDS) {
+            expectedScore += SCORE_INCREASE
+            viewModel.updateUserGuess(correctPlayerWord)
+            viewModel.checkUserGuess()
+            currentGameUiState = viewModel.uiState.value
+            correctPlayerWord = getUnscrambledWord(currentGameUiState.currentScrambledWord)
+            // Assert that after each correct answer, score is updated correctly.
+            assertEquals(expectedScore, currentGameUiState.score)
+        }
+        // Assert that after all questions are answered, the current word count is up-to-date.
+        assertEquals(MAX_NO_OF_WORDS, currentGameUiState.currentWordCount)
+        // Assert that after 10 questions are answered, the game is over.
+        assertTrue(currentGameUiState.isGameOver)
+      }
+    ```
