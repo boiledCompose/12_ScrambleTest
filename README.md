@@ -1,21 +1,14 @@
-Unscramble app
-=================================
+## 테스트 전략
 
-Single player game app that displays scrambled words. To play the game, player has to make a
-word using all the letters in the displayed scrambled word.
-This code demonstrates the Android Architecture component- ViewModel and StateFlow.
+기본적인 수준에서 테스트는 성공 경로, 오류 경로, 경계 사례라는 세 가지의 시나리오로 구분할 수 있다.
 
+- **성공 경로:** 긍정적인 흐름의 기능 테스트에 집중한다. 앱의 의도된 동작에 초점을 맞추기 때문에
+예외나 오류 조건을 포함하지 않는다. 
+- **오류 경로:** 부정적인 흐름의 기능 테스트에 집중한다. 즉 앱이 오류 조건 또는 잘못된 입력에 어떻게
+응답하는지 확인하는 데 초점을 맞춘다. 의도된 동작이 실행되지 않을 때 발생하는 결과를 테스트하는 것이기에 
+테스트 목록 구성이 어렵다.
+- **경계 사례:** 앱의 경계 조건을 테스트하는 데 초점을 맞춘다.
 
-Pre-requisites
---------------
-* Experience with Kotlin syntax.
-* How to create and run a project in Android Studio.
-* How to create composable functions 
-
-
-Getting Started
----------------
-1. Install Android Studio, if you don't already have it.
-2. Download the sample.
-3. Import the sample into Android Studio.
-4. Build and run the sample.
+>[!NOTE]
+> 가능한 모든 오류 경로를 나열하고 이에 관한 테스트를 작성하여 다양한 시나리오를 발견하면서 단위 테스트를 계속
+개선하는 것이 바람직하다.
