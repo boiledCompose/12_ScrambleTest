@@ -136,3 +136,7 @@ fun gameViewModel_IncorrectGuess_ErrorFlagSet() {
         assertTrue(currentGameUiState.isGameOver)
       }
     ```
+
+> [!IMPORTANT]
+> 모든 테스트는 독립적으로 실행되며 전역변수가 다른 메서드에서 초기화되어도 전혀 영향을 받지
+> 않는다. 따라서 테스트 메서드의 순서는 어떻게 해도 상관이 없다.
